@@ -12,12 +12,10 @@ Sistema de controle de almoço da **Titanium Telecom** — PHP 8.3 + MySQL 8.x.
 
 1. Copie a pasta `titanium-lunch` para o servidor (ex.: `C:\xampp\htdocs\titanium-lunch`).
 
-2. **Banco:** copie `config/database.local.php.example` → `config/database.local.php` e configure `DB_PASS`.
+2. **Configuração:** copie `.env.example` → `.env` e preencha `DB_*` e `KIOSK_PIN`.  
+   Alternativa legada: `config/database.local.php` e `config/app.local.php` (têm prioridade sobre o `.env`).
 
-3. **App:** copie `config/app.local.php.example` → `config/app.local.php` e defina pelo menos:
-   ```php
-   define('KIOSK_PIN', '2024');  // ou '' para desativar
-   ```
+3. **App:** no `.env`, defina `KIOSK_PIN=2024` (ou deixe vazio para desativar).
 
 4. Crie o banco:
    ```bash

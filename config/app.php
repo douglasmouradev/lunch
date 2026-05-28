@@ -31,11 +31,11 @@ if (!defined('BASE_URL')) {
 }
 
 if (!defined('APP_ENV')) {
-    define('APP_ENV', 'production');
+    define('APP_ENV', Env::get('APP_ENV', 'production') ?? 'production');
 }
 
 if (!defined('KIOSK_PIN')) {
-    define('KIOSK_PIN', '');
+    define('KIOSK_PIN', Env::get('KIOSK_PIN', '') ?? '');
 }
 
 if (!defined('UNDO_SECONDS')) {
@@ -51,12 +51,12 @@ if (!defined('BLOCK_WEEKENDS')) {
 }
 
 if (!defined('KIOSK_IDLE_MINUTES')) {
-    define('KIOSK_IDLE_MINUTES', 15);
+    define('KIOSK_IDLE_MINUTES', Env::int('KIOSK_IDLE_MINUTES', 15));
 }
 
 /** open = marcação na home; kiosk_only = só quiosque (com PIN se configurado) */
 if (!defined('MARKING_MODE')) {
-    define('MARKING_MODE', 'open');
+    define('MARKING_MODE', Env::get('MARKING_MODE', 'open') ?? 'open');
 }
 
 if (!defined('LOG_MAX_BYTES')) {
@@ -65,7 +65,7 @@ if (!defined('LOG_MAX_BYTES')) {
 
 /** No quiosque, exige PIN de 4 dígitos do colaborador para marcar. */
 if (!defined('KIOSK_REQUIRE_EMPLOYEE_PIN')) {
-    define('KIOSK_REQUIRE_EMPLOYEE_PIN', true);
+    define('KIOSK_REQUIRE_EMPLOYEE_PIN', Env::bool('KIOSK_REQUIRE_EMPLOYEE_PIN', true));
 }
 
 function base_url(string $path = ''): string
