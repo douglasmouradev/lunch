@@ -51,7 +51,6 @@ final class Env
             }
 
             $_ENV[$name] = $value;
-            putenv($name . '=' . $value);
         }
     }
 
@@ -61,9 +60,11 @@ final class Env
             return $_ENV[$key];
         }
 
-        $fromEnv = getenv($key);
-        if ($fromEnv !== false) {
-            return $fromEnv;
+        if (function_exists('getenv')) {
+            $fromEnv = getenv($key);
+            if ($fromEnv !== false) {
+                return $fromEnv;
+            }
         }
 
         return $default;
