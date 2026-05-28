@@ -1,0 +1,10 @@
+config/database.local.php
+config/app.local.php
+storage/logs/*.log
+storage/pins-*.csv
+!storage/logs/.gitkeep
+setup/lista-almoco.xlsx
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

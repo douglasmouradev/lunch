@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+
+// Copie para app.local.php
+// define('BASE_URL', '/titanium-lunch/public');
+// define('APP_ENV', 'local');
+// define('KIOSK_PIN', '2024');
+// define('UNDO_SECONDS', 30);
+// define('DAY_LOCK_TIME', '14:00');
+// define('BLOCK_WEEKENDS', true);
+// define('KIOSK_IDLE_MINUTES', 15);
+// define('MARKING_MODE', 'kiosk_only');
+// define('KIOSK_REQUIRE_EMPLOYEE_PIN', true);

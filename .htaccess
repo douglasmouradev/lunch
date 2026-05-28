@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    RewriteRule ^admin/?$ admin/index.php [L]
+
+    DirectoryIndex index.php
+</IfModule>
+
+# Bloqueia acesso direto a pastas sensíveis (Apache 2.4+)
+<IfModule mod_authz_core.c>
+    <DirectoryMatch "^(config|setup|src|storage|data|views)(/|$)">
+        Require all denied
+    </DirectoryMatch>
+</IfModule>
