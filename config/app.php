@@ -80,12 +80,23 @@ function base_url(string $path = ''): string
     return ($base === '' ? '' : $base) . '/' . $path;
 }
 
+function asset_path(string $path): string
+{
+    $path = ltrim(str_replace('\\', '/', $path), '/');
+    $inPublic = APP_ROOT . '/public/assets/' . $path;
+    if (is_file($inPublic)) {
+        return $inPublic;
+    }
+
+    return APP_ROOT . '/assets/' . $path;
+}
+
 function asset_url(string $path): string
 {
-    $full = APP_ROOT . '/assets/' . ltrim(str_replace('\\', '/', $path), '/');
+    $full = asset_path($path);
     $v = is_file($full) ? (string) filemtime($full) : '1';
 
-    return base_url('assets/' . ltrim($path, '/')) . '?v=' . $v;
+    return base_url('assets/' . ltrim(str_replace('\\', '/', $path), '/')) . '?v=' . $v;
 }
 
 function api_url(string $path): string

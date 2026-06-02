@@ -2,6 +2,9 @@
     RewriteEngine On
     RewriteBase /
 
+    # CSS/JS (document root na raiz do projeto — aaPanel padrão)
+    RewriteRule ^assets/(.*)$ public/assets/$1 [L]
+
     RewriteRule ^admin/?$ admin/index.php [L]
 
     DirectoryIndex index.php

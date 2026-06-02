@@ -9,7 +9,11 @@ if ($uri !== '/' && is_file($file)) {
 }
 
 if (str_starts_with($uri, '/assets/')) {
-    $asset = dirname(__DIR__) . $uri;
+    $rel = substr($uri, strlen('/assets/'));
+    $asset = __DIR__ . '/assets/' . $rel;
+    if (!is_file($asset)) {
+        $asset = dirname(__DIR__) . '/assets/' . $rel;
+    }
     if (is_file($asset)) {
         $ext = pathinfo($asset, PATHINFO_EXTENSION);
         $types = ['css' => 'text/css', 'js' => 'application/javascript', 'svg' => 'image/svg+xml'];
