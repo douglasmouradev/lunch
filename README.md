@@ -33,6 +33,17 @@ Sistema de controle de almoço da **Titanium Telecom** — PHP 8.3 + MySQL 8.x.
    - Admin: `/admin` — `admin` / `titanium2024` (troca obrigatória no 1º acesso)
    - Relatório: exige login admin
 
+## Deploy VPS (aaPanel + Git)
+
+```bash
+cd /www/wwwroot/lunch.tdesksolutions.com.br
+git pull origin main
+bash setup/fix-permissions.sh
+php setup/apply-migrations.php
+```
+
+Após `git pull`, o `storage/` costuma ficar como `root` — o script acima entrega a pasta ao usuário `www` (PHP). No Nginx, use o trecho em `deploy/nginx-assets.conf` se `/assets/` retornar 404.
+
 ## Desenvolvimento local
 
 Na raiz do projeto (modo legado):
