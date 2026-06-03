@@ -72,7 +72,7 @@ php -S localhost:8080 -t public public/router.php
 
 | Constante | Padrão | Uso |
 |-----------|--------|-----|
-| `KIOSK_PIN` | *(vazio)* | PIN do quiosque |
+| `KIOSK_PIN` | *(vazio)* | PIN de acesso ao sistema (marcação + quiosque). **Obrigatório em produção.** |
 | `KIOSK_IDLE_MINUTES` | `15` | Bloqueia após inatividade (0 = desliga) |
 | `MARKING_MODE` | `open` | `kiosk_only` = só quiosque marca |
 | `DAY_LOCK_TIME` | `23:59` | Horário que encerra o dia |

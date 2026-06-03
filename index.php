@@ -21,6 +21,7 @@ $pageTitle = $page === 'report' ? 'Relatório' : 'Marcação de Almoço';
 $activeTab = $page;
 
 if ($page === 'home') {
+    requireAppPinAccess(base_url('index.php?page=home'));
     $data = LunchController::homeData();
     extract($data);
     $contentView = __DIR__ . '/views/home.php';

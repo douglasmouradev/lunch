@@ -1789,6 +1789,21 @@ select:focus {
   margin: 0 0 1.25rem;
 }
 
+.kiosk-pin-footer {
+  margin: 1.25rem 0 0;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.kiosk-pin-footer a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.kiosk-pin-footer a:hover {
+  color: var(--accent);
+}
+
 .kiosk-pin-input {
   width: 100%;
   text-align: center;

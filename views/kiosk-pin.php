@@ -1,6 +1,10 @@
 <?php
 declare(strict_types=1);
 /** @var string|null $pinError */
+/** @var string|null $pinFormAction */
+/** @var string|null $pinRedirect */
+$pinFormAction = $pinFormAction ?? base_url('kiosk.php');
+$pinRedirect = $pinRedirect ?? $pinFormAction;
 ?>
 <!DOCTYPE html>
 <html lang="pt-BR">
@@ -17,11 +21,12 @@ declare(strict_types=1);
             <span class="kiosk-brand-company">Titanium Telecom</span>
             <span class="kiosk-brand-title">Marcação de almoço</span>
         </div>
-        <p class="kiosk-pin-lead">Informe o PIN para acessar o quiosque.</p>
+        <p class="kiosk-pin-lead">Informe o PIN para acessar o sistema.</p>
         <?php if (!empty($pinError)): ?>
             <p class="form-error" role="alert"><?= e($pinError) ?></p>
         <?php endif; ?>
-        <form method="post" action="<?= e(base_url('kiosk.php')) ?>" class="kiosk-pin-form">
+        <form method="post" action="<?= e($pinFormAction) ?>" class="kiosk-pin-form">
+            <input type="hidden" name="pin_redirect" value="<?= e($pinRedirect) ?>">
             <label for="kiosk_pin" class="sr-only">PIN</label>
             <input type="password"
                    id="kiosk_pin"
@@ -35,6 +40,9 @@ declare(strict_types=1);
                    required>
             <button type="submit" class="btn btn-primary btn-block">Entrar</button>
         </form>
+        <p class="kiosk-pin-footer">
+            <a href="<?= e(base_url('admin/index.php')) ?>">Acesso administrativo</a>
+        </p>
     </main>
 </body>
 </html>
