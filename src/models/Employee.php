@@ -86,15 +86,25 @@ class Employee
         return $row ?: null;
     }
 
-    public static function create(string $name, int $departmentId): int
+    /**
+     * @return array{id: int, created: bool, reactivated: bool}
+     */
+    public static function create(string $name, int $departmentId): array
     {
-        $existing = self::findByNameKey($name);
+        $trimmed = trim($name);
+        $existing = self::findByNameKey($trimmed);
         if ($existing !== null) {
-            return (int) $existing['id'];
+            $id = (int) $existing['id'];
+            $reactivated = !(int) $existing['active'];
+            if ($reactivated) {
+                self::setActive($id, true);
+            }
+            self::update($id, $trimmed, $departmentId);
+
+            return ['id' => $id, 'created' => false, 'reactivated' => $reactivated];
         }
 
         $pdo = getDB();
-        $trimmed = trim($name);
         $key = self::nameKey($trimmed);
         try {
             $stmt = $pdo->prepare('INSERT INTO employees (name, name_key, department_id) VALUES (?, ?, ?)');
@@ -104,7 +114,7 @@ class Employee
             $stmt->execute([$trimmed, $departmentId]);
         }
 
-        return (int) $pdo->lastInsertId();
+        return ['id' => (int) $pdo->lastInsertId(), 'created' => true, 'reactivated' => false];
     }
 
     public static function update(int $id, string $name, int $departmentId): bool
@@ -150,6 +160,51 @@ class Employee
     {
         $pdo = getDB();
         return (int) $pdo->query('SELECT COUNT(*) FROM employees WHERE active = 1')->fetchColumn();
+    }
+
+    /** @return array{active: int, inactive: int, without_pin: int} */
+    public static function adminStats(): array
+    {
+        $pdo = getDB();
+        try {
+            $row = $pdo->query(
+                'SELECT
+                    SUM(active = 1) AS active_count,
+                    SUM(active = 0) AS inactive_count,
+                    SUM(active = 1 AND (pin_hash IS NULL OR pin_hash = \'\')) AS without_pin
+                 FROM employees'
+            )->fetch(PDO::FETCH_ASSOC);
+        } catch (PDOException) {
+            $row = $pdo->query(
+                'SELECT SUM(active = 1) AS active_count, SUM(active = 0) AS inactive_count FROM employees'
+            )->fetch(PDO::FETCH_ASSOC);
+            $row['without_pin'] = 0;
+        }
+
+        return [
+            'active' => (int) ($row['active_count'] ?? 0),
+            'inactive' => (int) ($row['inactive_count'] ?? 0),
+            'without_pin' => (int) ($row['without_pin'] ?? 0),
+        ];
+    }
+
+    public static function countActiveWithoutPin(): int
+    {
+        return self::adminStats()['without_pin'];
+    }
+
+    /** Hash da lista ativa do quiosque (detectar cadastros novos sem F5 manual). */
+    public static function kioskListHash(string $date): string
+    {
+        $rows = self::activeForKiosk($date);
+        $payload = array_map(static function (array $row): array {
+            return [
+                'id' => (int) $row['id'],
+                'h' => $row['had_lunch'] === null ? null : (int) $row['had_lunch'],
+            ];
+        }, $rows);
+
+        return hash('crc32b', json_encode($payload, JSON_THROW_ON_ERROR));
     }
 
     /** Colaboradores ativos sem registro na data. */

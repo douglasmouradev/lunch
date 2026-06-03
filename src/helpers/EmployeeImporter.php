@@ -74,8 +74,10 @@ class EmployeeImporter
                 continue;
             }
 
-            Employee::create($name, $deptId);
-            $imported++;
+            $created = Employee::create($name, $deptId);
+            if ($created['created'] || $created['reactivated']) {
+                $imported++;
+            }
         }
 
         $deactivated = 0;

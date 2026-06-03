@@ -176,8 +176,15 @@ class AdminController
             $savedId = $empId;
             Flash::set('Funcionário atualizado.');
         } else {
-            $savedId = Employee::create($name, $deptId);
-            Flash::set('Funcionário cadastrado.');
+            $result = Employee::create($name, $deptId);
+            $savedId = $result['id'];
+            if ($result['created']) {
+                Flash::set('Funcionário cadastrado.');
+            } elseif ($result['reactivated']) {
+                Flash::set('Já existia como inativo e foi reativado. Agora aparece na marcação.');
+            } else {
+                Flash::set('Já existia na base; nome e departamento foram atualizados.');
+            }
         }
 
         if ($pin !== '') {
@@ -301,6 +308,8 @@ class AdminController
         $departments = Department::all();
         $records = LunchRecord::adminAll(150);
         $importLogs = ImportLog::recent(30);
+        $employeeStats = Employee::adminStats();
+        $systemHealth = systemHealthInfo();
 
         $pageTitle = 'Administração';
         $activeTab = 'admin';
@@ -313,6 +322,8 @@ class AdminController
             'departments',
             'records',
             'importLogs',
+            'employeeStats',
+            'systemHealth',
             'flashMessage',
             'flashType',
             'pinExportReady'

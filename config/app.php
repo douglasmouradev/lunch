@@ -54,6 +54,11 @@ if (!defined('KIOSK_IDLE_MINUTES')) {
     define('KIOSK_IDLE_MINUTES', Env::int('KIOSK_IDLE_MINUTES', 15));
 }
 
+/** Intervalo (segundos) para o quiosque verificar lista atualizada (0 = desliga). */
+if (!defined('KIOSK_REFRESH_SECONDS')) {
+    define('KIOSK_REFRESH_SECONDS', Env::int('KIOSK_REFRESH_SECONDS', 120));
+}
+
 /** open = marcação na home; kiosk_only = só quiosque (com PIN se configurado) */
 if (!defined('MARKING_MODE')) {
     define('MARKING_MODE', Env::get('MARKING_MODE', 'open') ?? 'open');

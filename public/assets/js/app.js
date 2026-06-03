@@ -454,6 +454,51 @@
       });
       resetIdle();
     }
+
+    const clockEl = document.getElementById('kiosk-clock');
+    if (clockEl) {
+      const pad = (n) => String(n).padStart(2, '0');
+      const tickClock = () => {
+        const now = new Date();
+        clockEl.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+      };
+      tickClock();
+      setInterval(tickClock, 1000);
+    }
+
+    const listHash = document.querySelector('meta[name="kiosk-list-hash"]')?.content || '';
+    const serverDate = document.querySelector('meta[name="kiosk-server-date"]')?.content || '';
+    const refreshSec = parseInt(
+      document.querySelector('meta[name="kiosk-refresh-seconds"]')?.content || '0',
+      10
+    );
+
+    async function checkKioskFreshness() {
+      try {
+        const res = await fetch(url('api/kiosk-data.php'), { credentials: 'same-origin' });
+        if (res.status === 401) {
+          window.location.reload();
+          return;
+        }
+        const data = await res.json();
+        if (!data.success) return;
+        if (data.date !== serverDate || data.list_hash !== listHash) {
+          window.location.reload();
+        }
+      } catch {
+        /* rede instável: mantém tela atual */
+      }
+    }
+
+    if (refreshSec > 0) {
+      setInterval(checkKioskFreshness, refreshSec * 1000);
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkKioskFreshness();
+      }
+    });
   }
 
   function updateCounters(yes, no, pending) {
@@ -519,6 +564,28 @@
 
     rangeRadios.forEach((r) => r.addEventListener('change', toggleRangeFields));
     toggleRangeFields();
+
+    const dateNotice = document.getElementById('report-date-notice');
+
+    function updateReportDateNotice() {
+      if (!dateNotice) return;
+      const isPeriod = form.querySelector('input[name="range_type"]:checked')?.value === 'period';
+      let filterDate = document.getElementById('filter-date')?.value;
+      if (isPeriod) {
+        const start = document.getElementById('filter-date-start')?.value;
+        const end = document.getElementById('filter-date-end')?.value;
+        const today = localTodayIso();
+        dateNotice.classList.toggle('is-hidden', start === today && end === today);
+        return;
+      }
+      dateNotice.classList.toggle('is-hidden', filterDate === localTodayIso());
+    }
+
+    ['filter-date', 'filter-date-start', 'filter-date-end'].forEach((id) => {
+      document.getElementById(id)?.addEventListener('change', updateReportDateNotice);
+    });
+    rangeRadios.forEach((r) => r.addEventListener('change', updateReportDateNotice));
+    updateReportDateNotice();
 
     function getFilters() {
       const isPeriod = form.querySelector('input[name="range_type"]:checked')?.value === 'period';
@@ -646,6 +713,7 @@
 
         updateSortHeaders();
         renderPagination(data.pagination);
+        updateReportDateNotice();
         updatePrintMeta(lastFilters);
       } catch {
         tbody.innerHTML =
@@ -742,6 +810,7 @@
         toggleRangeFields();
         document.getElementById('filter-status').value = 'pending_today';
         currentPage = 1;
+        updateReportDateNotice();
         loadReport();
       });
     }
@@ -819,6 +888,38 @@
         }
       });
     });
+
+    const empSearch = document.getElementById('emp-table-search');
+    const empFilter = document.getElementById('emp-table-filter');
+    const empCount = document.getElementById('emp-table-count');
+    const empRows = document.querySelectorAll('.emp-table-row');
+
+    function applyEmployeeTableFilter() {
+      const q = (empSearch?.value || '').trim().toLowerCase();
+      const mode = empFilter?.value || 'all';
+      let visible = 0;
+      empRows.forEach((row) => {
+        const text = row.dataset.search || '';
+        const active = row.dataset.active === '1';
+        const hasPin = row.dataset.hasPin === '1';
+        const matchSearch = !q || text.includes(q);
+        let matchFilter = true;
+        if (mode === 'active') matchFilter = active;
+        else if (mode === 'inactive') matchFilter = !active;
+        else if (mode === 'no-pin') matchFilter = active && !hasPin;
+        const show = matchSearch && matchFilter;
+        row.classList.toggle('is-hidden', !show);
+        if (show) visible++;
+      });
+      if (empCount) {
+        empCount.textContent =
+          visible === 1 ? '1 funcionário' : `${visible} funcionários`;
+      }
+    }
+
+    empSearch?.addEventListener('input', debounce(applyEmployeeTableFilter, 150));
+    empFilter?.addEventListener('change', applyEmployeeTableFilter);
+    applyEmployeeTableFilter();
   }
 
   function escapeHtml(str) {

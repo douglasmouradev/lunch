@@ -4,7 +4,11 @@ declare(strict_types=1);
 /** @var array $employees */
 /** @var array $totals */
 /** @var bool $locked */
+/** @var int $active_without_pin */
+/** @var string $list_hash */
+/** @var int $refresh_seconds */
 $dateFormatted = (new DateTime($date))->format('d/m/Y');
+$serverTime = $server_time ?? date('H:i:s');
 $weekdays = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
 $weekday = $weekdays[(int) (new DateTime($date))->format('w')];
 $total = (int) ($totals['total_active'] ?? count($employees));
@@ -28,6 +32,9 @@ $progress = $total > 0 ? (int) round(($marked / $total) * 100) : 0;
     <meta name="base-url" content="<?= e(BASE_URL) ?>">
     <meta name="kiosk-idle-minutes" content="<?= (int) ($idle_minutes ?? 15) ?>">
     <meta name="require-employee-pin" content="<?= !empty($require_employee_pin) ? '1' : '0' ?>">
+    <meta name="kiosk-list-hash" content="<?= e($list_hash ?? '') ?>">
+    <meta name="kiosk-refresh-seconds" content="<?= (int) ($refresh_seconds ?? 120) ?>">
+    <meta name="kiosk-server-date" content="<?= e($date) ?>">
 </head>
 <body class="kiosk-body" data-page="kiosk" data-require-employee-pin="<?= !empty($require_employee_pin) ? '1' : '0' ?>">
     <div id="toast-root" class="toast-root" aria-live="polite" aria-atomic="true"></div>
@@ -76,6 +83,7 @@ $progress = $total > 0 ? (int) round(($marked / $total) * 100) : 0;
             <div class="kiosk-datetime">
                 <span class="kiosk-weekday"><?= e($weekday) ?></span>
                 <time class="kiosk-date" datetime="<?= e($date) ?>"><?= e($dateFormatted) ?></time>
+                <span class="kiosk-clock mono" id="kiosk-clock" aria-live="off"><?= e($serverTime) ?></span>
             </div>
             <a href="<?= e(base_url('kiosk.php?action=lock')) ?>" class="btn btn-ghost btn-kiosk-lock" title="Bloquear quiosque">Bloquear</a>
         </div>
@@ -114,6 +122,13 @@ $progress = $total > 0 ? (int) round(($marked / $total) * 100) : 0;
 
     <?php if ($locked): ?>
         <p class="kiosk-locked">Marcações encerradas para hoje.</p>
+    <?php endif; ?>
+
+    <?php if (!empty($require_employee_pin) && ($active_without_pin ?? 0) > 0): ?>
+        <p class="kiosk-alert" role="status">
+            <?= (int) $active_without_pin ?> colaborador(es) ativo(s) sem PIN — não conseguem marcar no quiosque.
+            Cadastre no painel admin.
+        </p>
     <?php endif; ?>
 
     <div class="kiosk-toolbar">

@@ -80,6 +80,7 @@ php -S localhost:8080 -t public public/router.php
 | `UNDO_SECONDS` | `30` | Janela do desfazer |
 | `KIOSK_REQUIRE_EMPLOYEE_PIN` | `true` | Exige PIN de 4 dígitos do colaborador no quiosque |
 | `APP_TIMEZONE` | `America/Bahia` | Fuso para “hoje” no quiosque (Salvador / Bahia) |
+| `KIOSK_REFRESH_SECONDS` | `120` | Atualiza lista do quiosque automaticamente (0 = desliga) |
 
 ### PIN dos colaboradores
 

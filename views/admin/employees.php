@@ -7,6 +7,10 @@ declare(strict_types=1);
 /** @var string|null $flashType */
 /** @var bool $pinExportReady */
 /** @var array $importLogs */
+/** @var array $employeeStats */
+/** @var array $systemHealth */
+$employeeStats = $employeeStats ?? ['active' => 0, 'inactive' => 0, 'without_pin' => 0];
+$systemHealth = $systemHealth ?? [];
 ?>
 <section class="admin-panel">
     <div class="admin-header">
@@ -52,6 +56,30 @@ declare(strict_types=1);
         </p>
     <?php endif; ?>
 
+    <div class="admin-summary" role="status">
+        <span class="admin-summary-item admin-summary-item--ok">
+            <strong><?= (int) $employeeStats['active'] ?></strong> ativos
+        </span>
+        <span class="admin-summary-item<?= (int) $employeeStats['without_pin'] > 0 ? ' admin-summary-item--warn' : '' ?>">
+            <strong><?= (int) $employeeStats['without_pin'] ?></strong> sem PIN
+        </span>
+        <span class="admin-summary-item">
+            <strong><?= (int) $employeeStats['inactive'] ?></strong> inativos
+        </span>
+    </div>
+
+    <details class="admin-health">
+        <summary>Saúde do sistema</summary>
+        <dl class="admin-health-list">
+            <div><dt>Fuso / hora</dt><dd><?= e($systemHealth['timezone'] ?? '—') ?> · <?= e($systemHealth['server_time'] ?? '—') ?></dd></div>
+            <div><dt>Dia operacional</dt><dd class="mono"><?= e($systemHealth['today'] ?? '—') ?></dd></div>
+            <div><dt>Bloqueio do dia</dt><dd><?= e($systemHealth['day_lock_time'] ?? '—') ?></dd></div>
+            <div><dt>Modo marcação</dt><dd><?= e($systemHealth['marking_mode'] ?? '—') ?></dd></div>
+            <div><dt>PIN quiosque</dt><dd><?= !empty($systemHealth['kiosk_pin_set']) ? 'Configurado' : 'Desativado' ?></dd></div>
+            <div><dt>Versão Git</dt><dd class="mono"><?= e($systemHealth['git_commit'] ?? '—') ?></dd></div>
+        </dl>
+    </details>
+
     <div class="admin-tabs">
         <button type="button" class="admin-tab is-active" data-tab="employees">Funcionários</button>
         <button type="button" class="admin-tab" data-tab="departments">Departamentos</button>
@@ -92,8 +120,18 @@ declare(strict_types=1);
             </div>
             <div class="admin-card admin-card--wide">
                 <h2>Funcionários Cadastrados</h2>
+                <div class="admin-table-tools">
+                    <input type="search" id="emp-table-search" class="admin-table-search" placeholder="Buscar nome ou departamento…" autocomplete="off">
+                    <select id="emp-table-filter" class="admin-table-filter" aria-label="Filtrar lista">
+                        <option value="all">Todos</option>
+                        <option value="active">Somente ativos</option>
+                        <option value="inactive">Somente inativos</option>
+                        <option value="no-pin">Sem PIN (ativos)</option>
+                    </select>
+                    <span class="admin-table-count" id="emp-table-count"></span>
+                </div>
                 <div class="table-wrap">
-                    <table class="data-table data-table--compact">
+                    <table class="data-table data-table--compact" id="emp-table">
                         <thead>
                             <tr>
                                 <th>Nome</th>
@@ -105,7 +143,10 @@ declare(strict_types=1);
                         </thead>
                         <tbody>
                             <?php foreach ($employees as $emp): ?>
-                            <tr>
+                            <tr class="emp-table-row"
+                                data-active="<?= (int) $emp['active'] ?>"
+                                data-has-pin="<?= !empty($emp['has_pin']) ? '1' : '0' ?>"
+                                data-search="<?= e(strtolower($emp['name'] . ' ' . $emp['department_name'])) ?>">
                                 <td><?= e($emp['name']) ?></td>
                                 <td><?= e($emp['department_name']) ?></td>
                                 <td>

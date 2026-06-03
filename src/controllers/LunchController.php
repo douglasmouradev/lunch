@@ -22,14 +22,37 @@ class LunchController
     public static function kioskData(): array
     {
         $date = date('Y-m-d');
+        $employees = Employee::activeForKiosk($date);
 
         return [
             'date' => $date,
-            'employees' => Employee::activeForKiosk($date),
+            'employees' => $employees,
             'totals' => LunchRecord::dayTotals($date),
             'locked' => isDayLocked($date),
             'idle_minutes' => defined('KIOSK_IDLE_MINUTES') ? (int) KIOSK_IDLE_MINUTES : 15,
+            'refresh_seconds' => defined('KIOSK_REFRESH_SECONDS') ? (int) KIOSK_REFRESH_SECONDS : 120,
             'require_employee_pin' => EmployeePin::isRequiredForKiosk(),
+            'active_without_pin' => Employee::countActiveWithoutPin(),
+            'list_hash' => Employee::kioskListHash($date),
+            'server_time' => date('H:i:s'),
+        ];
+    }
+
+    public static function kioskSnapshot(): array
+    {
+        $data = self::kioskData();
+
+        return [
+            'success' => true,
+            'date' => $data['date'],
+            'locked' => $data['locked'],
+            'list_hash' => $data['list_hash'],
+            'server_time' => $data['server_time'],
+            'active_without_pin' => $data['active_without_pin'],
+            'total_active' => (int) ($data['totals']['total_active'] ?? 0),
+            'total_yes' => (int) ($data['totals']['total_yes'] ?? 0),
+            'total_no' => (int) ($data['totals']['total_no'] ?? 0),
+            'total_pending' => (int) ($data['totals']['total_pending'] ?? 0),
         ];
     }
 

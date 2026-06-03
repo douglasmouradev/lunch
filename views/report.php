@@ -64,6 +64,10 @@ $today = date('Y-m-d');
 
     </form>
 
+    <p class="report-date-notice is-hidden" id="report-date-notice" role="status">
+        A data do filtro não é hoje — confira se está consultando o dia correto.
+    </p>
+
     <div class="report-results" id="report-results">
         <div class="report-cards" id="report-cards" aria-live="polite"></div>
         <div class="table-wrap report-table-wrap">

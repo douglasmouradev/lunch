@@ -28,6 +28,7 @@ require_once __DIR__ . '/src/helpers/MarkingContext.php';
 require_once __DIR__ . '/src/helpers/Auth.php';
 require_once __DIR__ . '/src/helpers/KioskAuth.php';
 require_once __DIR__ . '/src/helpers/EmployeePin.php';
+require_once __DIR__ . '/src/helpers/SystemHealth.php';
 require_once __DIR__ . '/src/helpers/XlsxReader.php';
 require_once __DIR__ . '/src/helpers/EmployeeImporter.php';
 require_once __DIR__ . '/src/models/Employee.php';
