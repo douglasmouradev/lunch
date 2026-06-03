@@ -9,6 +9,50 @@
     return baseUrl ? `${baseUrl}/${p}` : `/${p}`;
   }
 
+  let markAudioCtx = null;
+
+  function getMarkAudioContext() {
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    if (!Ctx) return null;
+    if (!markAudioCtx) markAudioCtx = new Ctx();
+    if (markAudioCtx.state === 'suspended') {
+      markAudioCtx.resume();
+    }
+    return markAudioCtx;
+  }
+
+  /** Som curto ao confirmar marcação (gesto do usuário já liberou o áudio). */
+  function playMarkSound(hadLunch) {
+    const ctx = getMarkAudioContext();
+    if (!ctx) return;
+
+    const isYes = parseInt(hadLunch, 10) === 1;
+    const t0 = ctx.currentTime;
+
+    function tone(freq, start, duration, volume) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(volume, start + 0.015);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration + 0.05);
+    }
+
+    if (isYes) {
+      tone(523.25, t0, 0.1, 0.18);
+      tone(659.25, t0 + 0.09, 0.12, 0.16);
+      tone(783.99, t0 + 0.17, 0.22, 0.14);
+    } else {
+      tone(440, t0, 0.14, 0.12);
+      tone(349.23, t0 + 0.1, 0.2, 0.1);
+    }
+  }
+
   function showToast(message, type, options) {
     const root = document.getElementById('toast-root');
     if (!root) return;
@@ -311,6 +355,8 @@
       const btn = e.target.closest('.btn-lunch');
       if (!btn || btn.disabled) return;
 
+      getMarkAudioContext();
+
       const row = btn.closest('.employee-row');
       const employeeId = row?.dataset.employeeId;
       const hadLunch = btn.dataset.hadLunch;
@@ -362,6 +408,7 @@
 
         setRowMarkState(row, data.had_lunch);
         updateCounters(data.total_yes, data.total_no, data.total_pending);
+        playMarkSound(data.had_lunch);
 
         lastUndoEmployeeId = data.employee_id;
         const label = parseInt(data.had_lunch, 10) === 1 ? 'Almoçou' : 'Não almoçou';
