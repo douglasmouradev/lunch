@@ -79,6 +79,7 @@ php -S localhost:8080 -t public public/router.php
 | `BLOCK_WEEKENDS` | `false` | Bloqueia sábado/domingo |
 | `UNDO_SECONDS` | `30` | Janela do desfazer |
 | `KIOSK_REQUIRE_EMPLOYEE_PIN` | `true` | Exige PIN de 4 dígitos do colaborador no quiosque |
+| `APP_TIMEZONE` | `America/Bahia` | Fuso para “hoje” no quiosque (Salvador / Bahia) |
 
 ### PIN dos colaboradores
 

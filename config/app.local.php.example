@@ -11,3 +11,4 @@ declare(strict_types=1);
 // define('KIOSK_IDLE_MINUTES', 15);
 // define('MARKING_MODE', 'kiosk_only');
 // define('KIOSK_REQUIRE_EMPLOYEE_PIN', true);
+// define('APP_TIMEZONE', 'America/Bahia');

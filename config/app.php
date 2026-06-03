@@ -68,6 +68,17 @@ if (!defined('KIOSK_REQUIRE_EMPLOYEE_PIN')) {
     define('KIOSK_REQUIRE_EMPLOYEE_PIN', Env::bool('KIOSK_REQUIRE_EMPLOYEE_PIN', true));
 }
 
+/** Fuso para data/hora do almoço (padrão: Salvador / Bahia). */
+if (!defined('APP_TIMEZONE')) {
+    define('APP_TIMEZONE', Env::get('APP_TIMEZONE', 'America/Bahia') ?? 'America/Bahia');
+}
+
+$appTz = APP_TIMEZONE;
+if (!in_array($appTz, timezone_identifiers_list(), true)) {
+    $appTz = 'America/Bahia';
+}
+date_default_timezone_set($appTz);
+
 function base_url(string $path = ''): string
 {
     $path = ltrim(str_replace('\\', '/', $path), '/');

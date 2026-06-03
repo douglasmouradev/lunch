@@ -733,7 +733,7 @@
     const pendingBtn = document.getElementById('btn-pending-today');
     if (pendingBtn) {
       pendingBtn.addEventListener('click', () => {
-        const today = new Date().toISOString().slice(0, 10);
+        const today = localTodayIso();
         document.getElementById('filter-date')?.setAttribute('value', today);
         document.getElementById('filter-date-start')?.setAttribute('value', today);
         document.getElementById('filter-date-end')?.setAttribute('value', today);
@@ -833,6 +833,12 @@
       .toLowerCase()
       .replace(/(?:^|\s)\S/g, (a) => a.toUpperCase())
       .replace(/\b(De|Da|Do|Dos|Das|E)\b/g, (m) => m.toLowerCase());
+  }
+
+  function localTodayIso() {
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
   }
 
   function formatDate(iso) {

@@ -62,6 +62,14 @@ class LunchController
             return ['success' => false, 'error' => 'Os registros deste dia estão bloqueados.'];
         }
 
+        $today = date('Y-m-d');
+        if ($date !== $today) {
+            return [
+                'success' => false,
+                'error' => 'A marcação só vale para hoje (' . (new DateTime($today))->format('d/m/Y') . '). Recarregue a página.',
+            ];
+        }
+
         $employee = Employee::find($employeeId);
         if (!$employee || !(int) $employee['active']) {
             return ['success' => false, 'error' => 'Funcionário não encontrado ou inativo.'];
