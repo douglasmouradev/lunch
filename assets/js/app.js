@@ -967,6 +967,269 @@
     empSearch?.addEventListener('input', debounce(applyEmployeeTableFilter, 150));
     empFilter?.addEventListener('change', applyEmployeeTableFilter);
     applyEmployeeTableFilter();
+
+    initAdminCalendar();
+  }
+
+  function initAdminCalendar() {
+    const grid = document.getElementById('cal-grid');
+    if (!grid) return;
+
+    const MONTHS = [
+      'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+      'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+    ];
+    const WEEKDAYS = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+    const els = {
+      grid,
+      monthLabel: document.getElementById('cal-month-label'),
+      dayTitle: document.getElementById('cal-day-title'),
+      daySubtitle: document.getElementById('cal-day-subtitle'),
+      dayStats: document.getElementById('cal-day-stats'),
+      statPending: document.getElementById('cal-stat-pending'),
+      statYes: document.getElementById('cal-stat-yes'),
+      statNo: document.getElementById('cal-stat-no'),
+      dayList: document.getElementById('cal-day-list'),
+      search: document.getElementById('cal-emp-search'),
+      filter: document.getElementById('cal-emp-filter'),
+    };
+
+    const today = localTodayIso();
+    const todayParts = today.split('-').map(Number);
+    let viewYear = todayParts[0];
+    let viewMonth = todayParts[1];
+    let selectedDate = today;
+    let monthDays = {};
+    let totalActive = 0;
+    let dayEmployees = [];
+
+    function padMonth(y, m) {
+      return `${y}-${String(m).padStart(2, '0')}`;
+    }
+
+    function isoDate(y, m, d) {
+      return `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    }
+
+    function dayStatsFor(iso) {
+      if (monthDays[iso]) return monthDays[iso];
+      if (iso > today) {
+        return { total_yes: 0, total_no: 0, total_pending: 0, total_active: totalActive };
+      }
+      return {
+        total_yes: 0,
+        total_no: 0,
+        total_pending: totalActive,
+        total_active: totalActive,
+      };
+    }
+
+    async function fetchMonth() {
+      const res = await fetch(url(`api/admin-calendar.php?month=${padMonth(viewYear, viewMonth)}`));
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Erro ao carregar mês');
+      monthDays = data.days || {};
+      totalActive = data.total_active || 0;
+    }
+
+    async function fetchDay(date) {
+      const res = await fetch(url(`api/admin-calendar.php?date=${date}`));
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Erro ao carregar dia');
+      return data;
+    }
+
+    function renderMonthGrid() {
+      els.monthLabel.textContent = `${MONTHS[viewMonth - 1]} ${viewYear}`;
+      const firstDow = new Date(viewYear, viewMonth - 1, 1).getDay();
+      const daysInMonth = new Date(viewYear, viewMonth, 0).getDate();
+      let html = '';
+
+      for (let i = 0; i < firstDow; i++) {
+        html += '<span class="cal-day is-outside" aria-hidden="true"></span>';
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const iso = isoDate(viewYear, viewMonth, d);
+        const stats = dayStatsFor(iso);
+        const isToday = iso === today;
+        const isSelected = iso === selectedDate;
+        const isFuture = iso > today;
+        const tip = `${stats.total_yes} almoçaram · ${stats.total_no} não · ${stats.total_pending} pendentes`;
+
+        html += `<button type="button" class="cal-day${isToday ? ' is-today' : ''}${isSelected ? ' is-selected' : ''}${isFuture ? ' is-future' : ''}"
+          data-date="${iso}" title="${tip}" aria-label="${d} de ${MONTHS[viewMonth - 1]}, ${tip}">
+          <span class="cal-day-num">${d}</span>
+          <span class="cal-day-dots">
+            ${stats.total_yes > 0 ? '<i class="cal-dot cal-dot--yes"></i>' : ''}
+            ${stats.total_no > 0 ? '<i class="cal-dot cal-dot--no"></i>' : ''}
+            ${stats.total_pending > 0 ? '<i class="cal-dot cal-dot--pending"></i>' : ''}
+          </span>
+        </button>`;
+      }
+
+      els.grid.innerHTML = html;
+    }
+
+    function updateDayStats(totals) {
+      els.statPending.textContent = totals.total_pending ?? 0;
+      els.statYes.textContent = totals.total_yes ?? 0;
+      els.statNo.textContent = totals.total_no ?? 0;
+      els.dayStats.hidden = false;
+    }
+
+    function renderDayList() {
+      const q = (els.search?.value || '').trim().toLowerCase();
+      const mode = els.filter?.value || 'all';
+      const filtered = dayEmployees.filter((emp) => {
+        const text = `${emp.name} ${emp.department_name}`.toLowerCase();
+        const matchSearch = !q || text.includes(q);
+        const matchFilter = mode === 'all' || emp.status === mode;
+        return matchSearch && matchFilter;
+      });
+
+      if (!filtered.length) {
+        els.dayList.innerHTML = '<p class="table-empty">Nenhum colaborador encontrado para este filtro.</p>';
+        return;
+      }
+
+      els.dayList.innerHTML = filtered.map((emp) => {
+        const yesActive = emp.status === 'yes' ? ' is-active' : '';
+        const noActive = emp.status === 'no' ? ' is-active' : '';
+        return `<div class="cal-emp-row is-${emp.status}" data-employee-id="${emp.id}" data-status="${emp.status}">
+          <div class="cal-emp-info">
+            <div class="cal-emp-name">${escapeHtml(emp.name)}</div>
+            <div class="cal-emp-dept">${escapeHtml(emp.department_name)}</div>
+          </div>
+          <div class="cal-emp-actions">
+            <button type="button" class="cal-emp-btn cal-emp-btn--yes${yesActive}" data-action="set" data-had-lunch="1">Almoçou</button>
+            <button type="button" class="cal-emp-btn cal-emp-btn--no${noActive}" data-action="set" data-had-lunch="0">Não almoçou</button>
+            <button type="button" class="cal-emp-btn cal-emp-btn--clear" data-action="clear">Limpar</button>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    async function loadDay(date) {
+      selectedDate = date;
+      renderMonthGrid();
+
+      const parts = date.split('-').map(Number);
+      const dt = new Date(parts[0], parts[1] - 1, parts[2]);
+      const weekday = WEEKDAYS[dt.getDay()];
+      els.dayTitle.textContent = `${formatDate(date)} — ${weekday}`;
+      els.daySubtitle.textContent = 'Altere as marcações manualmente. As mudanças são salvas imediatamente.';
+      els.search.disabled = false;
+      els.filter.disabled = false;
+      els.dayList.innerHTML = '<p class="table-empty">Carregando…</p>';
+
+      try {
+        const data = await fetchDay(date);
+        dayEmployees = data.employees || [];
+        updateDayStats(data.totals || {});
+        if (data.locked) {
+          els.daySubtitle.textContent = 'Dia encerrado pelo horário de bloqueio — o admin ainda pode corrigir marcações.';
+        }
+        renderDayList();
+      } catch (err) {
+        els.dayList.innerHTML = `<p class="table-empty">${escapeHtml(err.message || 'Erro ao carregar.')}</p>`;
+      }
+    }
+
+    async function setLunch(employeeId, action, hadLunch) {
+      const row = els.dayList.querySelector(`.cal-emp-row[data-employee-id="${employeeId}"]`);
+      row?.classList.add('is-saving');
+
+      const formData = new FormData();
+      formData.append('csrf_token', csrfToken);
+      formData.append('employee_id', String(employeeId));
+      formData.append('date', selectedDate);
+      formData.append('action', action);
+      if (action === 'set') formData.append('had_lunch', String(hadLunch));
+
+      try {
+        const res = await fetch(url('api/admin-set-lunch.php'), { method: 'POST', body: formData });
+        const data = await res.json();
+        if (!data.success) {
+          showToast(data.error || 'Erro ao salvar.', 'error');
+          return;
+        }
+
+        dayEmployees = data.employees || [];
+        updateDayStats(data.totals || {});
+        monthDays[selectedDate] = {
+          total_yes: data.totals.total_yes,
+          total_no: data.totals.total_no,
+          total_pending: data.totals.total_pending,
+          total_active: data.totals.total_active,
+        };
+        renderMonthGrid();
+        renderDayList();
+        showToast(`${data.employee_name}: marcação atualizada.`, 'success');
+      } catch {
+        showToast('Falha na comunicação com o servidor.', 'error');
+      } finally {
+        row?.classList.remove('is-saving');
+      }
+    }
+
+    async function refreshMonth() {
+      try {
+        await fetchMonth();
+        renderMonthGrid();
+      } catch (err) {
+        showToast(err.message || 'Erro ao carregar calendário.', 'error');
+      }
+    }
+
+    document.getElementById('cal-prev')?.addEventListener('click', async () => {
+      viewMonth -= 1;
+      if (viewMonth < 1) { viewMonth = 12; viewYear -= 1; }
+      await refreshMonth();
+    });
+
+    document.getElementById('cal-next')?.addEventListener('click', async () => {
+      viewMonth += 1;
+      if (viewMonth > 12) { viewMonth = 1; viewYear += 1; }
+      await refreshMonth();
+    });
+
+    document.getElementById('cal-today')?.addEventListener('click', async () => {
+      viewYear = todayParts[0];
+      viewMonth = todayParts[1];
+      await refreshMonth();
+      await loadDay(today);
+    });
+
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cal-day[data-date]');
+      if (!btn) return;
+      loadDay(btn.dataset.date);
+    });
+
+    els.dayList?.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cal-emp-btn');
+      if (!btn) return;
+      const row = btn.closest('.cal-emp-row');
+      const employeeId = row?.dataset.employeeId;
+      if (!employeeId) return;
+
+      const action = btn.dataset.action;
+      if (action === 'clear') {
+        setLunch(employeeId, 'clear');
+        return;
+      }
+      setLunch(employeeId, 'set', parseInt(btn.dataset.hadLunch, 10));
+    });
+
+    els.search?.addEventListener('input', debounce(renderDayList, 150));
+    els.filter?.addEventListener('change', renderDayList);
+
+    (async function boot() {
+      await refreshMonth();
+      await loadDay(today);
+    })();
   }
 
   function escapeHtml(str) {

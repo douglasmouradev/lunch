@@ -229,10 +229,20 @@ class AdminController
         $recordAction = $_POST['record_action'] ?? '';
         $recordId = (int) ($_POST['record_id'] ?? 0);
         $hadLunch = (int) ($_POST['had_lunch'] ?? 0);
+        $employeeId = (int) ($_POST['employee_id'] ?? 0);
+        $date = trim((string) ($_POST['lunch_date'] ?? ''));
 
         if ($recordAction === 'toggle' && $recordId > 0) {
             LunchRecord::adminUpdate($recordId, $hadLunch ? 1 : 0);
             Flash::set('Registro atualizado manualmente.');
+            return;
+        }
+
+        if ($recordAction === 'set' && $employeeId > 0 && preg_match('/^\d{4}-\d{2}-\d{2}$/', $date)) {
+            $val = $_POST['had_lunch'] ?? '';
+            $had = $val === '' || $val === 'clear' ? null : ((int) $val ? 1 : 0);
+            LunchRecord::adminSetEmployee($employeeId, $date, $had);
+            Flash::set('Marcação do calendário atualizada.');
         }
     }
 

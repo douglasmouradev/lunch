@@ -83,6 +83,7 @@ $systemHealth = $systemHealth ?? [];
     <div class="admin-tabs">
         <button type="button" class="admin-tab is-active" data-tab="employees">Funcionários</button>
         <button type="button" class="admin-tab" data-tab="departments">Departamentos</button>
+        <button type="button" class="admin-tab" data-tab="calendar">Calendário</button>
         <button type="button" class="admin-tab" data-tab="records">Registros</button>
         <button type="button" class="admin-tab" data-tab="imports">Importações</button>
     </div>
@@ -237,6 +238,54 @@ $systemHealth = $systemHealth ?? [];
                     </li>
                     <?php endforeach; ?>
                 </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-tab-panel" id="tab-calendar">
+        <div class="admin-calendar-layout">
+            <div class="admin-card admin-card--calendar">
+                <div class="cal-toolbar">
+                    <button type="button" class="cal-nav-btn" id="cal-prev" aria-label="Mês anterior">‹</button>
+                    <h2 class="cal-month-label" id="cal-month-label">—</h2>
+                    <button type="button" class="cal-nav-btn" id="cal-next" aria-label="Próximo mês">›</button>
+                    <button type="button" class="btn btn-ghost cal-today-btn" id="cal-today">Hoje</button>
+                </div>
+                <div class="cal-weekdays" aria-hidden="true">
+                    <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+                </div>
+                <div class="cal-grid" id="cal-grid" role="grid" aria-label="Calendário de almoços"></div>
+                <div class="cal-legend">
+                    <span><i class="cal-dot cal-dot--yes"></i> Almoçou</span>
+                    <span><i class="cal-dot cal-dot--no"></i> Não almoçou</span>
+                    <span><i class="cal-dot cal-dot--pending"></i> Pendente</span>
+                </div>
+            </div>
+
+            <div class="admin-card admin-card--wide admin-card--cal-day">
+                <div class="cal-day-header">
+                    <div>
+                        <h2 class="cal-day-title" id="cal-day-title">Selecione um dia</h2>
+                        <p class="cal-day-subtitle" id="cal-day-subtitle">Clique em uma data para ver e editar as marcações.</p>
+                    </div>
+                    <div class="cal-day-stats" id="cal-day-stats" hidden>
+                        <span class="cal-stat cal-stat--pending"><strong id="cal-stat-pending">0</strong> pendentes</span>
+                        <span class="cal-stat cal-stat--yes"><strong id="cal-stat-yes">0</strong> almoçaram</span>
+                        <span class="cal-stat cal-stat--no"><strong id="cal-stat-no">0</strong> não almoçaram</span>
+                    </div>
+                </div>
+                <div class="cal-day-tools">
+                    <input type="search" id="cal-emp-search" class="admin-table-search" placeholder="Buscar colaborador ou departamento…" autocomplete="off" disabled>
+                    <select id="cal-emp-filter" class="admin-table-filter" aria-label="Filtrar status" disabled>
+                        <option value="all">Todos</option>
+                        <option value="pending">Pendentes</option>
+                        <option value="yes">Almoçaram</option>
+                        <option value="no">Não almoçaram</option>
+                    </select>
+                </div>
+                <div class="cal-day-list" id="cal-day-list">
+                    <p class="table-empty">Nenhum dia selecionado.</p>
+                </div>
             </div>
         </div>
     </div>

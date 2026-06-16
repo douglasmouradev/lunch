@@ -180,4 +180,88 @@ class LunchRecord
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /** Resumo por dia de um mês (para o calendário admin). */
+    public static function monthSummary(int $year, int $month): array
+    {
+        $start = sprintf('%04d-%02d-01', $year, $month);
+        $end = date('Y-m-t', strtotime($start));
+        $active = Employee::countActive();
+
+        $pdo = getDB();
+        $sql = 'SELECT lr.lunch_date,
+                       SUM(CASE WHEN lr.had_lunch = 1 THEN 1 ELSE 0 END) AS total_yes,
+                       SUM(CASE WHEN lr.had_lunch = 0 THEN 1 ELSE 0 END) AS total_no
+                FROM lunch_records lr
+                INNER JOIN employees e ON e.id = lr.employee_id AND e.active = 1
+                WHERE lr.lunch_date BETWEEN ? AND ?
+                GROUP BY lr.lunch_date';
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([$start, $end]);
+        $rows = $stmt->fetchAll();
+
+        $days = [];
+        foreach ($rows as $row) {
+            $yes = (int) $row['total_yes'];
+            $no = (int) $row['total_no'];
+            $days[$row['lunch_date']] = [
+                'total_yes' => $yes,
+                'total_no' => $no,
+                'total_pending' => max(0, $active - $yes - $no),
+                'total_active' => $active,
+            ];
+        }
+
+        return [
+            'year' => $year,
+            'month' => $month,
+            'total_active' => $active,
+            'days' => $days,
+        ];
+    }
+
+    /** Define ou remove marcação de um colaborador (admin — qualquer data). */
+    public static function adminSetEmployee(int $employeeId, string $date, ?int $hadLunch): bool
+    {
+        $pdo = getDB();
+        if ($hadLunch === null) {
+            $stmt = $pdo->prepare('DELETE FROM lunch_records WHERE employee_id = ? AND lunch_date = ?');
+            return $stmt->execute([$employeeId, $date]);
+        }
+
+        return self::toggle($employeeId, $date, $hadLunch ? 1 : 0, 'admin');
+    }
+
+    /** Detalhe de um dia para o calendário admin. */
+    public static function adminDayDetail(string $date): array
+    {
+        $grouped = Employee::activeGroupedByDepartment($date);
+        $totals = self::dayTotals($date);
+        $flat = [];
+
+        foreach ($grouped as $departmentName => $employees) {
+            foreach ($employees as $emp) {
+                $hadLunch = $emp['had_lunch'];
+                $status = 'pending';
+                if ($hadLunch !== null) {
+                    $status = (int) $hadLunch === 1 ? 'yes' : 'no';
+                }
+                $flat[] = [
+                    'id' => (int) $emp['id'],
+                    'name' => formatName($emp['name']),
+                    'department_name' => $departmentName,
+                    'had_lunch' => $hadLunch === null ? null : (int) $hadLunch,
+                    'status' => $status,
+                    'marked_at' => $emp['marked_at'] ?? null,
+                ];
+            }
+        }
+
+        return [
+            'date' => $date,
+            'employees' => $flat,
+            'totals' => $totals,
+            'locked' => isDayLocked($date),
+        ];
+    }
 }
