@@ -2247,86 +2247,186 @@ select:focus {
 [data-theme="sao-joao"] #progress-pct { color: #fbbf24; }
 
 /* ---------- cards de sumário (pendentes / almoçaram) ---------- */
-[data-theme="sao-joao"] .summary-card {
-  background: linear-gradient(145deg, #2a1204, #1f0d02);
+/* ---------- cards de resumo (Pendentes / Almoçaram / Não almoçaram) ---------- */
+[data-theme="sao-joao"] .stat-card {
+  background: radial-gradient(circle at 0 0, rgba(245,158,11,0.18), transparent 55%),
+              radial-gradient(circle at 100% 0, rgba(185,28,28,0.18), transparent 55%),
+              #1f0d02;
   border: 1px solid #5c2e08;
   box-shadow: 0 0 0 1px rgba(245,158,11,0.08), var(--shadow);
 }
 
-[data-theme="sao-joao"] .summary-card--yes {
-  border-color: #15803d;
-  box-shadow: 0 0 12px rgba(21,128,61,0.2), var(--shadow);
+[data-theme="sao-joao"] .stat-card--yes .stat-icon {
+  background: radial-gradient(circle at 20% 0, #bbf7d0, #166534);
+  color: #ecfdf5;
 }
 
-[data-theme="sao-joao"] .summary-card--no {
-  border-color: #b91c1c;
-  box-shadow: 0 0 12px rgba(185,28,28,0.2), var(--shadow);
+[data-theme="sao-joao"] .stat-card--no .stat-icon {
+  background: radial-gradient(circle at 20% 0, #fecaca, #7f1d1d);
+  color: #fef2f2;
 }
 
-/* ---------- cards de colaborador ---------- */
-[data-theme="sao-joao"] .employee-card {
+[data-theme="sao-joao"] .stat-card--pending .stat-icon {
+  background: radial-gradient(circle at 20% 0, #fef3c7, #b45309);
+  color: #451a03;
+}
+
+[data-theme="sao-joao"] .stat-number {
+  color: #fef3c7;
+  text-shadow: 0 0 12px rgba(251,191,36,0.35);
+}
+
+[data-theme="sao-joao"] .stat-label {
+  color: #fbbf24;
+}
+
+/* ---------- cards de colaborador (lista de funcionários) ---------- */
+[data-theme="sao-joao"] .employee-row {
   background: linear-gradient(145deg, #261005, #1a0900);
   border: 1px solid #5c2e08;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.55);
 }
 
-[data-theme="sao-joao"] .employee-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(251,146,60,0.18), 0 2px 8px rgba(0,0,0,0.6);
+[data-theme="sao-joao"] .employee-row:hover {
   border-color: #f59e0b;
+  box-shadow: 0 8px 24px rgba(251,146,60,0.24), 0 3px 10px rgba(0,0,0,0.7);
 }
 
-/* badge pendente / status */
-[data-theme="sao-joao"] .status-badge {
-  background: rgba(245,158,11,0.12);
-  color: #fbbf24;
-  border: 1px solid rgba(245,158,11,0.25);
+[data-theme="sao-joao"] .employee-row.is-pending {
+  border-color: #fbbf24;
+  background: linear-gradient(120deg, rgba(245,158,11,0.22), transparent 60%), #1a0900;
 }
 
-/* ---------- botões de ação ---------- */
-[data-theme="sao-joao"] .btn-yes {
-  background: linear-gradient(135deg, #15803d, #16a34a);
-  box-shadow: 0 2px 10px rgba(21,128,61,0.4);
+[data-theme="sao-joao"] .employee-row.is-marked-yes {
+  border-left: 3px solid #16a34a;
+  box-shadow: 0 0 0 1px rgba(22,163,74,0.25), 0 6px 18px rgba(21,128,61,0.45);
+  animation: sj-row-yes 0.45s ease-out;
 }
-[data-theme="sao-joao"] .btn-yes:hover { background: linear-gradient(135deg, #16a34a, #22c55e); }
 
-[data-theme="sao-joao"] .btn-no {
-  background: linear-gradient(135deg, #b91c1c, #dc2626);
-  box-shadow: 0 2px 10px rgba(185,28,28,0.4);
+[data-theme="sao-joao"] .employee-row.is-marked-no {
+  border-left: 3px solid #dc2626;
+  box-shadow: 0 0 0 1px rgba(220,38,38,0.25), 0 6px 18px rgba(185,28,28,0.4);
+  animation: sj-row-no 0.45s ease-out;
 }
-[data-theme="sao-joao"] .btn-no:hover { background: linear-gradient(135deg, #dc2626, #ef4444); }
 
-/* ---------- search bar ---------- */
-[data-theme="sao-joao"] .search-box {
-  background: #1f0d02;
+@keyframes sj-row-yes {
+  0%   { transform: translateY(4px) scale(0.98); }
+  60%  { transform: translateY(0)   scale(1.02); }
+  100% { transform: translateY(0)   scale(1); }
+}
+
+@keyframes sj-row-no {
+  0%   { transform: translateY(0) scale(1); }
+  30%  { transform: translateY(-3px) scale(1.02); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* badge de status (Pendente / Almoçou / Não almoçou) */
+[data-theme="sao-joao"] .status-pill {
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.28);
+}
+
+[data-theme="sao-joao"] .status-pill--pending {
+  background: linear-gradient(135deg, #fef3c7, #facc15);
+  color: #451a03;
+  border-color: rgba(245,158,11,0.6);
+}
+
+[data-theme="sao-joao"] .status-pill--yes {
+  background: linear-gradient(135deg, #bbf7d0, #16a34a);
+  color: #052e16;
+}
+
+[data-theme="sao-joao"] .status-pill--no {
+  background: linear-gradient(135deg, #fecaca, #dc2626);
+  color: #450a0a;
+}
+
+/* ---------- botões de ação (Almoçou / Não almoçou) ---------- */
+[data-theme="sao-joao"] .btn-lunch {
+  background: linear-gradient(135deg, #1f0d02, #2a1204);
   border-color: #5c2e08;
   color: #fef3c7;
 }
-[data-theme="sao-joao"] .search-box:focus {
-  border-color: #f59e0b;
-  box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
-}
-[data-theme="sao-joao"] .search-box::placeholder { color: #92400e; }
 
-/* ---------- filter pills ---------- */
-[data-theme="sao-joao"] .filter-btn {
-  background: rgba(245,158,11,0.08);
-  border-color: #5c2e08;
-  color: #d97706;
-}
-[data-theme="sao-joao"] .filter-btn.is-active,
-[data-theme="sao-joao"] .filter-btn:hover {
-  background: rgba(245,158,11,0.2);
+[data-theme="sao-joao"] .btn-lunch:hover:not(:disabled) {
   border-color: #f59e0b;
+  box-shadow: 0 0 0 1px rgba(245,158,11,0.3), 0 5px 16px rgba(0,0,0,0.7);
+}
+
+[data-theme="sao-joao"] .btn-yes.active {
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  box-shadow: 0 4px 14px rgba(22,163,74,0.7);
+}
+
+[data-theme="sao-joao"] .btn-no.active {
+  background: linear-gradient(135deg, #dc2626, #f97373);
+  box-shadow: 0 4px 14px rgba(220,38,38,0.6);
+}
+
+[data-theme="sao-joao"] .btn-lunch.pulse {
+  animation: sj-btn-pop 0.34s ease-out;
+}
+
+@keyframes sj-btn-pop {
+  0%   { transform: scale(1); }
+  55%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* ---------- chips de filtro / busca ---------- */
+[data-theme="sao-joao"] .filter-chips {
+  background: rgba(0,0,0,0.25);
+  border-radius: 999px;
+  padding: 0.15rem 0.4rem;
+}
+
+[data-theme="sao-joao"] .filter-chip {
+  background: rgba(245,158,11,0.1);
+  border-color: #5c2e08;
+  color: #fbbf24;
+}
+
+[data-theme="sao-joao"] .filter-chip:hover,
+[data-theme="sao-joao"] .filter-chip.is-active {
+  background: radial-gradient(circle at 20% 0, #f97316, #b91c1c);
+  border-color: #fbbf24;
+  color: #fffbeb;
+}
+
+/* ---------- cabeçalhos de tela (home / relatório / admin) ---------- */
+[data-theme="sao-joao"] .page-toolbar-title,
+[data-theme="sao-joao"] .page-title {
+  color: #fef3c7;
+  text-shadow: 0 0 14px rgba(251,191,36,0.45);
+}
+
+[data-theme="sao-joao"] .hero-label,
+[data-theme="sao-joao"] .page-subtitle,
+[data-theme="sao-joao"] .page-toolbar-weekday {
+  color: #fbbf24;
+}
+
+[data-theme="sao-joao"] .page-report .page-header,
+[data-theme="sao-joao"] .admin-summary {
+  background: linear-gradient(135deg, #1f0d02, #2a1204);
+  border-color: #5c2e08;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.7);
+}
+
+[data-theme="sao-joao"] .admin-summary-item {
+  color: #fbbf24;
+}
+
+[data-theme="sao-joao"] .admin-summary-item strong {
   color: #fef3c7;
 }
 
 /* ---------- aviso de PIN / alertas ---------- */
 [data-theme="sao-joao"] .alert-info {
-  background: rgba(245,158,11,0.08);
-  border-color: rgba(245,158,11,0.3);
-  color: #fbbf24;
+  background: rgba(245,158,11,0.12);
+  border-color: rgba(245,158,11,0.45);
+  color: #fef3c7;
 }
 
 /* ---------- footer ---------- */
