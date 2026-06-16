@@ -1006,62 +1006,123 @@
   /* ---- Tema São João: ativa automaticamente em junho ---- */
   function initSaoJoaoTheme() {
     const month = new Date().getMonth(); // 0=jan … 5=jun
-    const isFestajunina = month === 5; // junho
+    if (month !== 5) return;
+    if (sessionStorage.getItem('sj-dismissed')) return;
 
-    const storageKey = 'sj-theme-dismissed';
-    const dismissed = sessionStorage.getItem(storageKey);
-
-    if (!isFestajunina && !dismissed) return;
-    if (dismissed && !isFestajunina) return;
-
-    if (isFestajunina) {
-      document.documentElement.setAttribute('data-theme', 'sao-joao');
-      injectSaoJoaoToggle();
-    }
+    document.documentElement.setAttribute('data-theme', 'sao-joao');
+    injectSaoJoaoDecorations();
   }
 
-  function injectSaoJoaoToggle() {
+  function injectSaoJoaoDecorations() {
+    injectVaral();
+    injectFogueira();
+    injectToggle();
+  }
+
+  /* --- varal de bandeirolas triangulares SVG --- */
+  function injectVaral() {
+    const colors = ['#dc2626','#f59e0b','#16a34a','#7c3aed','#2563eb','#ec4899','#ea580c','#0891b2'];
+    const W = window.innerWidth || 1400;
+    const flagW = 28, flagH = 36, gap = 4, ropeY = 14;
+    const total = Math.ceil(W / (flagW + gap)) + 2;
+    let flags = '';
+    for (let i = 0; i < total; i++) {
+      const x = i * (flagW + gap);
+      const c = colors[i % colors.length];
+      const cx = x + flagW / 2;
+      flags += `<polygon points="${x},0 ${x + flagW},0 ${cx},${flagH}"
+        fill="${c}" opacity="0.92"
+        style="animation:sj-swing ${(2.2 + (i % 4) * 0.35).toFixed(2)}s ease-in-out infinite alternate;transform-origin:${cx}px 0px"/>`;
+    }
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${flagH + ropeY}"
+      style="display:block;position:absolute;top:0;left:0">
+      <line x1="0" y1="${ropeY}" x2="${W}" y2="${ropeY}" stroke="#5c2e08" stroke-width="2" opacity="0.9"/>
+      ${flags}
+    </svg>`;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'sj-varal';
+    wrap.innerHTML = svg;
+    document.body.appendChild(wrap);
+  }
+
+  /* --- fogueira SVG animada no rodapé --- */
+  function injectFogueira() {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 110"
+        style="width:220px;height:110px;display:block">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="80%" r="55%">
+          <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#dc2626" stop-opacity="0"/>
+        </radialGradient>
+      </defs>
+      <!-- reflexo no chão -->
+      <ellipse cx="110" cy="104" rx="60" ry="8" fill="url(#glow)"/>
+      <!-- lenhas -->
+      <rect x="72" y="88" width="76" height="8" rx="4" fill="#7c2d12" transform="rotate(-10,110,92)"/>
+      <rect x="72" y="88" width="76" height="8" rx="4" fill="#92400e" transform="rotate(10,110,92)"/>
+      <!-- brasa -->
+      <ellipse cx="110" cy="94" rx="34" ry="8" fill="#dc2626" opacity="0.7"
+        style="animation:sj-fire-flicker 0.9s ease-in-out infinite"/>
+      <ellipse cx="110" cy="94" rx="22" ry="6" fill="#f59e0b" opacity="0.85"
+        style="animation:sj-fire-flicker 0.7s ease-in-out infinite reverse"/>
+      <!-- chamas externas -->
+      <ellipse cx="110" cy="70" rx="30" ry="38" fill="#dc2626" opacity="0.75"
+        style="animation:sj-fire-flicker 1.1s ease-in-out infinite"/>
+      <ellipse cx="97" cy="72" rx="18" ry="28" fill="#ea580c" opacity="0.7"
+        style="animation:sj-fire-flicker 0.85s ease-in-out infinite 0.2s"/>
+      <ellipse cx="123" cy="72" rx="18" ry="28" fill="#ea580c" opacity="0.7"
+        style="animation:sj-fire-flicker 0.95s ease-in-out infinite 0.1s"/>
+      <!-- chamas centrais (mais quentes) -->
+      <ellipse cx="110" cy="65" rx="20" ry="32" fill="#f59e0b" opacity="0.8"
+        style="animation:sj-fire-flicker 0.75s ease-in-out infinite"/>
+      <ellipse cx="110" cy="60" rx="12" ry="26" fill="#fef08a" opacity="0.7"
+        style="animation:sj-fire-flicker 0.65s ease-in-out infinite 0.15s"/>
+      <!-- ponta branca -->
+      <ellipse cx="110" cy="52" rx="6" ry="14" fill="#fffbeb" opacity="0.6"
+        style="animation:sj-fire-flicker 0.55s ease-in-out infinite"/>
+      <!-- brasas voando -->
+      <circle cx="88"  cy="75" r="2.5" fill="#fbbf24" opacity="0.9"
+        style="animation:sj-ember 1.8s ease-out infinite;--ex:-8px"/>
+      <circle cx="132" cy="70" r="2"   fill="#f97316" opacity="0.85"
+        style="animation:sj-ember 2.1s ease-out infinite 0.4s;--ex:10px"/>
+      <circle cx="105" cy="60" r="1.5" fill="#fef08a" opacity="0.8"
+        style="animation:sj-ember 1.6s ease-out infinite 0.9s;--ex:-4px"/>
+      <circle cx="118" cy="65" r="2"   fill="#fbbf24" opacity="0.75"
+        style="animation:sj-ember 2.3s ease-out infinite 0.2s;--ex:6px"/>
+    </svg>`;
+
+    const wrap = document.createElement('div');
+    wrap.id = 'sj-fogueira';
+    wrap.innerHTML = svg;
+    document.body.appendChild(wrap);
+  }
+
+  /* --- botão liga/desliga --- */
+  function injectToggle() {
     const btn = document.createElement('button');
     btn.id = 'sj-theme-toggle';
-    btn.title = 'Alternar tema São João';
-    btn.setAttribute('aria-label', 'Desativar tema São João');
-    btn.innerHTML = '🎆';
-    btn.style.cssText = [
-      'position:fixed',
-      'bottom:1rem',
-      'right:1rem',
-      'z-index:10000',
-      'width:2.5rem',
-      'height:2.5rem',
-      'border-radius:50%',
-      'border:2px solid #f59e0b',
-      'background:#2e1503',
-      'color:#fde68a',
-      'font-size:1.1rem',
-      'cursor:pointer',
-      'display:flex',
-      'align-items:center',
-      'justify-content:center',
-      'box-shadow:0 2px 12px rgba(0,0,0,0.5)',
-      'transition:transform 0.2s ease',
-    ].join(';');
+    btn.title = 'Desativar tema São João';
+    btn.innerHTML = '🔥';
 
     let active = true;
     btn.addEventListener('click', function () {
       active = !active;
       if (active) {
         document.documentElement.setAttribute('data-theme', 'sao-joao');
-        btn.innerHTML = '🎆';
-        btn.setAttribute('aria-label', 'Desativar tema São João');
-        sessionStorage.removeItem('sj-theme-dismissed');
+        btn.innerHTML = '🔥';
+        btn.title = 'Desativar tema São João';
+        sessionStorage.removeItem('sj-dismissed');
+        document.getElementById('sj-varal')   && (document.getElementById('sj-varal').style.display   = '');
+        document.getElementById('sj-fogueira') && (document.getElementById('sj-fogueira').style.display = '');
       } else {
         document.documentElement.removeAttribute('data-theme');
-        btn.innerHTML = '🎇';
-        btn.setAttribute('aria-label', 'Ativar tema São João');
-        sessionStorage.setItem('sj-theme-dismissed', '1');
+        btn.innerHTML = '🌟';
+        btn.title = 'Ativar tema São João';
+        sessionStorage.setItem('sj-dismissed', '1');
+        document.getElementById('sj-varal')   && (document.getElementById('sj-varal').style.display   = 'none');
+        document.getElementById('sj-fogueira') && (document.getElementById('sj-fogueira').style.display = 'none');
       }
-      btn.style.transform = 'scale(1.2)';
-      setTimeout(function () { btn.style.transform = ''; }, 200);
     });
 
     document.body.appendChild(btn);

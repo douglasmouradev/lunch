@@ -2098,111 +2098,48 @@ select:focus {
 /* ========== Tema São João (junho) ========== */
 
 [data-theme="sao-joao"] {
-  --bg: #1a0a00;
-  --bg-subtle: #2b1300;
-  --surface: #2e1503;
-  --surface-elevated: #3a1c05;
-  --border: #6b3a10;
-  --border-solid: #7a4415;
-  --text: #fde68a;
-  --text-muted: #d97706;
+  --bg: #0d0500;
+  --bg-subtle: #1a0900;
+  --surface: #1f0d02;
+  --surface-elevated: #2a1204;
+  --border: #5c2e08;
+  --border-solid: #7a3f0e;
+  --text: #fef3c7;
+  --text-muted: #fbbf24;
   --accent: #f59e0b;
-  --accent-soft: #3d1f00;
-  --accent-hover: #d97706;
-  --silver: #b45309;
-  --navy: #7c2d12;
-  --yes-start: #16a34a;
+  --accent-soft: #2d1500;
+  --accent-hover: #fbbf24;
+  --silver: #d97706;
+  --navy: #92400e;
+  --yes-start: #15803d;
   --yes-end: #4ade80;
   --yes-bg: #052e16;
-  --no-start: #dc2626;
+  --no-start: #b91c1c;
   --no-end: #f87171;
-  --no-bg: #450a0a;
-  --pending-bg: #1c1000;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.6);
+  --no-bg: #3b0a0a;
+  --pending-bg: #1a0900;
+  --radius: 12px;
+  --radius-sm: 7px;
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.5);
+  --shadow: 0 4px 20px rgba(0,0,0,0.6);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.7);
 }
 
-/* Fundo com gradiente de fogueira */
+/* ---------- fundo noturno de arraiá ---------- */
 [data-theme="sao-joao"] body.app-body {
+  background-color: #0d0500;
   background-image:
-    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(251, 146, 60, 0.35), transparent),
-    radial-gradient(ellipse 60% 40% at 30% 100%, rgba(239, 68, 68, 0.2), transparent),
-    radial-gradient(ellipse 60% 40% at 70% 100%, rgba(234, 179, 8, 0.2), transparent);
+    /* brilho de lua no topo */
+    radial-gradient(ellipse 55% 30% at 50% -5%, rgba(253,230,138,0.10) 0%, transparent 70%),
+    /* glow de fogueira embaixo */
+    radial-gradient(ellipse 70% 45% at 50% 105%, rgba(251,146,60,0.45) 0%, rgba(185,28,28,0.25) 40%, transparent 70%),
+    /* labareda lateral esquerda */
+    radial-gradient(ellipse 35% 30% at 10% 100%, rgba(239,68,68,0.2) 0%, transparent 60%),
+    /* labareda lateral direita */
+    radial-gradient(ellipse 35% 30% at 90% 100%, rgba(234,179,8,0.2) 0%, transparent 60%);
 }
 
-/* Bandeirinhas no topo */
-[data-theme="sao-joao"] .site-header::before {
-  content: '';
-  display: block;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: repeating-linear-gradient(
-    90deg,
-    #dc2626 0px,   #dc2626 18px,
-    #f59e0b 18px,  #f59e0b 36px,
-    #16a34a 36px,  #16a34a 54px,
-    #7c3aed 54px,  #7c3aed 72px,
-    #2563eb 72px,  #2563eb 90px,
-    #ec4899 90px,  #ec4899 108px
-  );
-}
-
-[data-theme="sao-joao"] .site-header {
-  position: relative;
-  border-bottom-color: #7a4415;
-  background: linear-gradient(135deg, #1c0800 0%, #2e1503 100%);
-}
-
-/* Bandeirinhas triangulares decorativas via pseudo-elemento no body */
-[data-theme="sao-joao"] body.app-body::before {
-  content: '';
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 28px;
-  pointer-events: none;
-  z-index: 9999;
-  background:
-    /* Fio */
-    linear-gradient(180deg, transparent 9px, #5c2c00 9px, #5c2c00 12px, transparent 12px),
-    /* Bandeirinhas coloridas usando clip-path não disponível em bg; usamos repeating-linear para triangular effect */
-    repeating-linear-gradient(
-      90deg,
-      #dc2626   0px,  #dc2626  20px,
-      transparent 20px, transparent 24px,
-      #f59e0b  24px,  #f59e0b  44px,
-      transparent 44px, transparent 48px,
-      #16a34a  48px,  #16a34a  68px,
-      transparent 68px, transparent 72px,
-      #7c3aed  72px,  #7c3aed  92px,
-      transparent 92px, transparent 96px,
-      #2563eb  96px,  #2563eb 116px,
-      transparent 116px, transparent 120px,
-      #ec4899 120px,  #ec4899 140px,
-      transparent 140px, transparent 144px
-    );
-  clip-path: polygon(
-    0% 0%,   3.5% 100%,  7% 0%,
-    10.5% 0%, 14% 100%, 17.5% 0%,
-    21% 0%, 24.5% 100%, 28% 0%,
-    31.5% 0%, 35% 100%, 38.5% 0%,
-    42% 0%, 45.5% 100%, 49% 0%,
-    52.5% 0%, 56% 100%, 59.5% 0%,
-    63% 0%, 66.5% 100%, 70% 0%,
-    73.5% 0%, 77% 100%, 80.5% 0%,
-    84% 0%, 87.5% 100%, 91% 0%,
-    94.5% 0%, 98% 100%, 100% 0%,
-    100% 0%, 0% 0%
-  );
-}
-
-/* Estrelinhas animadas no fundo */
+/* ---------- estrelas cintilantes (pseudo) ---------- */
 [data-theme="sao-joao"] body.app-body::after {
   content: '';
   position: fixed;
@@ -2210,82 +2147,266 @@ select:focus {
   pointer-events: none;
   z-index: 0;
   background-image:
-    radial-gradient(circle 1.5px at 10% 15%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 1px at 20% 35%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 2px at 35% 10%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 50% 25%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 1.5px at 65% 8%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 75% 20%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 2px at 88% 14%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 92% 30%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 1.5px at 5% 45%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 15% 60%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 2px at 28% 50%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 42% 42%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 1.5px at 58% 55%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 70% 40%, #fde68a 100%, transparent 100%),
-    radial-gradient(circle 2px at 82% 48%, #fbbf24 100%, transparent 100%),
-    radial-gradient(circle 1px at 95% 58%, #fde68a 100%, transparent 100%);
-  animation: sj-twinkle 3s ease-in-out infinite alternate;
+    radial-gradient(circle 1.5px at  8% 12%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 16%  5%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 2px  at 27%  9%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 38% 18%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 1.5px at 47%  4%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 55% 14%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 2px  at 63%  7%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 71% 20%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 1.5px at 80%  3%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 89% 11%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 2px  at 94% 22%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at  3% 30%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 1.5px at 12% 38%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 23% 28%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 2px  at 34% 35%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 44% 32%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 1.5px at 57% 27%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 68% 40%, #fbbf24 100%, transparent 100%),
+    radial-gradient(circle 2px  at 78% 33%, #fef3c7 100%, transparent 100%),
+    radial-gradient(circle 1px  at 91% 36%, #fbbf24 100%, transparent 100%);
+  animation: sj-twinkle 4s ease-in-out infinite alternate;
 }
 
 @keyframes sj-twinkle {
-  0%   { opacity: 0.4; }
-  50%  { opacity: 1; }
-  100% { opacity: 0.6; }
+  0%   { opacity: 0.3; }
+  40%  { opacity: 1;   }
+  100% { opacity: 0.5; }
 }
 
-/* Efeito de tremulação nas bandeirinhas */
-@keyframes sj-flag-swing {
-  0%   { transform: skewX(0deg); }
-  25%  { transform: skewX(2deg); }
-  75%  { transform: skewX(-2deg); }
-  100% { transform: skewX(0deg); }
+/* ---------- header junino ---------- */
+[data-theme="sao-joao"] .site-header {
+  position: sticky;
+  background: linear-gradient(180deg, #1a0600 0%, #2a0f03 100%);
+  border-bottom: 2px solid #7a3f0e;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.7), 0 1px 0 rgba(251,146,60,0.15);
+  padding-top: 46px; /* espaço para o varal de bandeirolas */
 }
 
-[data-theme="sao-joao"] body.app-body::before {
-  animation: sj-flag-swing 2.5s ease-in-out infinite;
-  transform-origin: top center;
-}
-
-/* Accent e botões com cor junina */
-[data-theme="sao-joao"] .site-header .logo-mark {
-  color: #f59e0b;
-}
-
-/* Badge de São João no header */
-[data-theme="sao-joao"] .site-header::after {
-  content: '🎉 Arraiá do Almoço! 🎉';
-  display: block;
-  text-align: center;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: #fbbf24;
-  background: rgba(0, 0, 0, 0.3);
-  padding: 2px 0;
+/* fio do varal */
+[data-theme="sao-joao"] .site-header::before {
+  content: '';
   position: absolute;
-  bottom: -20px;
+  top: 13px;
   left: 0;
   right: 0;
+  height: 2px;
+  background: #5c2e08;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.8);
 }
 
-[data-theme="sao-joao"] .site-header {
-  margin-bottom: 20px;
+/* faixa "Arraiá" abaixo do nav */
+[data-theme="sao-joao"] .site-header::after {
+  content: '🎊  Arraiá do Almoço  🎊';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #fbbf24;
+  background: rgba(0,0,0,0.35);
+  padding: 3px 0 4px;
 }
 
-/* Cards com borda decorativa */
-[data-theme="sao-joao"] .card,
+/* título da empresa com gradiente junino */
+[data-theme="sao-joao"] .brand-company {
+  background: linear-gradient(135deg, #fef3c7 0%, #f59e0b 50%, #dc2626 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+[data-theme="sao-joao"] .brand-system {
+  color: #d97706;
+}
+
+/* nav links */
+[data-theme="sao-joao"] .main-nav {
+  background: rgba(255,255,255,0.05);
+  border-color: #5c2e08;
+}
+
+[data-theme="sao-joao"] .nav-link { color: #d97706; }
+[data-theme="sao-joao"] .nav-link:hover { color: #fef3c7; background: rgba(245,158,11,0.12); }
+[data-theme="sao-joao"] .nav-link.is-active { color: #fef3c7; background: rgba(245,158,11,0.18); border-color: #7a3f0e; }
+
+/* ---------- barra de progresso ---------- */
+[data-theme="sao-joao"] .day-progress-fill,
+[data-theme="sao-joao"] .kiosk-progress-fill {
+  background: linear-gradient(90deg, #dc2626, #f59e0b, #fef08a);
+  box-shadow: 0 0 8px rgba(251,146,60,0.6);
+}
+
+[data-theme="sao-joao"] .kiosk-progress-pct,
+[data-theme="sao-joao"] #progress-pct { color: #fbbf24; }
+
+/* ---------- cards de sumário (pendentes / almoçaram) ---------- */
+[data-theme="sao-joao"] .summary-card {
+  background: linear-gradient(145deg, #2a1204, #1f0d02);
+  border: 1px solid #5c2e08;
+  box-shadow: 0 0 0 1px rgba(245,158,11,0.08), var(--shadow);
+}
+
+[data-theme="sao-joao"] .summary-card--yes {
+  border-color: #15803d;
+  box-shadow: 0 0 12px rgba(21,128,61,0.2), var(--shadow);
+}
+
+[data-theme="sao-joao"] .summary-card--no {
+  border-color: #b91c1c;
+  box-shadow: 0 0 12px rgba(185,28,28,0.2), var(--shadow);
+}
+
+/* ---------- cards de colaborador ---------- */
 [data-theme="sao-joao"] .employee-card {
-  border-color: #7a4415;
-  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.1), var(--shadow);
+  background: linear-gradient(145deg, #261005, #1a0900);
+  border: 1px solid #5c2e08;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
-/* Scrollbar temática */
-[data-theme="sao-joao"] ::-webkit-scrollbar-thumb {
-  background: #92400e;
+[data-theme="sao-joao"] .employee-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(251,146,60,0.18), 0 2px 8px rgba(0,0,0,0.6);
+  border-color: #f59e0b;
 }
 
-[data-theme="sao-joao"] ::-webkit-scrollbar-track {
-  background: #1a0a00;
+/* badge pendente / status */
+[data-theme="sao-joao"] .status-badge {
+  background: rgba(245,158,11,0.12);
+  color: #fbbf24;
+  border: 1px solid rgba(245,158,11,0.25);
+}
+
+/* ---------- botões de ação ---------- */
+[data-theme="sao-joao"] .btn-yes {
+  background: linear-gradient(135deg, #15803d, #16a34a);
+  box-shadow: 0 2px 10px rgba(21,128,61,0.4);
+}
+[data-theme="sao-joao"] .btn-yes:hover { background: linear-gradient(135deg, #16a34a, #22c55e); }
+
+[data-theme="sao-joao"] .btn-no {
+  background: linear-gradient(135deg, #b91c1c, #dc2626);
+  box-shadow: 0 2px 10px rgba(185,28,28,0.4);
+}
+[data-theme="sao-joao"] .btn-no:hover { background: linear-gradient(135deg, #dc2626, #ef4444); }
+
+/* ---------- search bar ---------- */
+[data-theme="sao-joao"] .search-box {
+  background: #1f0d02;
+  border-color: #5c2e08;
+  color: #fef3c7;
+}
+[data-theme="sao-joao"] .search-box:focus {
+  border-color: #f59e0b;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+}
+[data-theme="sao-joao"] .search-box::placeholder { color: #92400e; }
+
+/* ---------- filter pills ---------- */
+[data-theme="sao-joao"] .filter-btn {
+  background: rgba(245,158,11,0.08);
+  border-color: #5c2e08;
+  color: #d97706;
+}
+[data-theme="sao-joao"] .filter-btn.is-active,
+[data-theme="sao-joao"] .filter-btn:hover {
+  background: rgba(245,158,11,0.2);
+  border-color: #f59e0b;
+  color: #fef3c7;
+}
+
+/* ---------- aviso de PIN / alertas ---------- */
+[data-theme="sao-joao"] .alert-info {
+  background: rgba(245,158,11,0.08);
+  border-color: rgba(245,158,11,0.3);
+  color: #fbbf24;
+}
+
+/* ---------- footer ---------- */
+[data-theme="sao-joao"] .site-footer {
+  background: #0d0500;
+  border-top-color: #3a1a03;
+  color: #92400e;
+}
+
+/* ---------- scrollbar ---------- */
+[data-theme="sao-joao"] ::-webkit-scrollbar { width: 6px; }
+[data-theme="sao-joao"] ::-webkit-scrollbar-track { background: #0d0500; }
+[data-theme="sao-joao"] ::-webkit-scrollbar-thumb { background: #7a3f0e; border-radius: 99px; }
+[data-theme="sao-joao"] ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
+
+/* ---------- animações das bandeirinhas (injetadas via JS) ---------- */
+@keyframes sj-swing {
+  0%, 100% { transform: rotate(-3deg); transform-origin: top center; }
+  50%       { transform: rotate(3deg);  transform-origin: top center; }
+}
+
+@keyframes sj-fire-flicker {
+  0%   { transform: scaleY(1)    scaleX(1);    opacity: 1;    }
+  25%  { transform: scaleY(1.07) scaleX(0.96); opacity: 0.95; }
+  50%  { transform: scaleY(0.95) scaleX(1.04); opacity: 1;    }
+  75%  { transform: scaleY(1.05) scaleX(0.97); opacity: 0.9;  }
+  100% { transform: scaleY(1)    scaleX(1);    opacity: 1;    }
+}
+
+@keyframes sj-ember {
+  0%   { transform: translateY(0)   translateX(0)   scale(1);   opacity: 0.9; }
+  100% { transform: translateY(-60px) translateX(var(--ex, 6px)) scale(0); opacity: 0; }
+}
+
+/* container fixo do varal injetado pelo JS */
+#sj-varal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 46px;
+  z-index: 9999;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* fogueira fixa no rodapé */
+#sj-fogueira {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  width: 220px;
+  height: 110px;
+}
+
+/* botão de toggle */
+#sj-theme-toggle {
+  position: fixed !important;
+  bottom: 1.25rem !important;
+  right: 1.25rem !important;
+  z-index: 10000 !important;
+  width: 3rem !important;
+  height: 3rem !important;
+  border-radius: 50% !important;
+  border: 2px solid #f59e0b !important;
+  background: radial-gradient(circle at 40% 40%, #3d1a02, #1a0700) !important;
+  color: #fef3c7 !important;
+  font-size: 1.3rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.15), 0 4px 16px rgba(0,0,0,0.6) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#sj-theme-toggle:hover {
+  transform: scale(1.1) !important;
+  box-shadow: 0 0 0 4px rgba(245,158,11,0.3), 0 6px 20px rgba(0,0,0,0.7) !important;
 }
