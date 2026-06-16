@@ -1,0 +1,11 @@
+<?php
+declare(strict_types=1);
+
+// Copie para database.local.php e ajuste conforme seu MySQL.
+// MySQL 9.7 nesta máquina usa a porta 3308 (não 3306).
+
+define('DB_HOST', '127.0.0.1');
+define('DB_PORT', 3308);
+define('DB_NAME', 'titanium_lunch');
+define('DB_USER', 'root');
+define('DB_PASS', 'SUA_SENHA_AQUI');

@@ -1,0 +1,9 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    RewriteRule ^assets/(.*)$ assets/$1 [L]
+    RewriteRule ^manifest\.json$ ../manifest.json [L]
+</IfModule>
+
+DirectoryIndex index.php
